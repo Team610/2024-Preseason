@@ -17,7 +17,7 @@ public class Vision extends Subsystem610 {
 
     /**
      * @param ledMode_m led, 0 is on & 1 is off
-     * @param tv_m limelight has a valid target, 0 is on & 1 is off I'm guessing
+     * @param tv_m limelight has a valid target, 1 is yes & 0 is no
      */
     private int ledMode_m;
     private int tv_m;
@@ -53,6 +53,10 @@ public class Vision extends Subsystem610 {
         networkTable_m.getEntry("ledMode").setNumber(ledMode_m);
     }
 
+        /**
+     * 0 for on, 1 for off
+     * @param camMode
+     */
     public void setCamMode(int camMode){
         networkTable_m.getEntry("camMode").setNumber(camMode);
     }
@@ -65,26 +69,20 @@ public class Vision extends Subsystem610 {
         networkTable_m.getEntry("camMode").setNumber(ledMode);
     }
 
-    public double getGoalDistance(){
-        NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-        NetworkTableEntry ty = table.getEntry("ty");
-        double targetOffsetAngle_Vertical = ty.getDouble(0.0);
-    
-        // how many degrees back is your limelight rotated from perfectly vertical?
-        double limelightMountAngleDegrees = 25.0; 
-    
-        // distance from the center of the Limelight lens to the floor
-        double limelightLensHeightInches = 20.0; 
-    
-        // distance from the target to the floor
-        double goalHeightInches = 60.0; 
-    
-        double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
-        double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
-    
-        //calculate distance
-        double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
-        return distanceFromLimelightToGoalInches;
+        /**
+     * Fetch the vertical offset from crosshair to target (ty)
+     * @return ty
+     */
+    public double calcTy(){
+        //get ty from the network table
+        return networkTable_m.getEntry("ty").getDouble(0.0);
+    }
+    /**
+     * @return The distance from the Limelight to the target
+     */
+    public double calcGoalDistance(){
+        //calculate the x distance to the goal
+        return 209.0 / Math.tan(Math.toRadians(VAL_MOUNT_ANGLE + calcTy()));
     }
 
     // Required Method
