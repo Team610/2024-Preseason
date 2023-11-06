@@ -15,7 +15,7 @@ public final class Constants {
 
     public static final class Swerve {
         public static final int pigeonID = 20;
-        public static final boolean invertGyro = true; // Always ensure Gyro is CCW+ CW-
+        public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 
         public static final COTSFalconSwerveConstants chosenModule =  COTSFalconSwerveConstants.SDSMK4i(COTSFalconSwerveConstants.driveGearRatios.SDSMK4i_L2);
 
@@ -103,7 +103,7 @@ public final class Constants {
             public static final int driveMotorID = 2;
             public static final int angleMotorID = 6;
             public static final int canCoderID = 12;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(+45+(38.496+40.693+38.496)/3);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(45+(38.496+40.693+38.496)/3);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
