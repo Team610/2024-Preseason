@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import frc.lib.util.COTSFalconSwerveConstants;
+import frc.lib.util.SwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
@@ -16,12 +16,12 @@ public final class Constants {
         public static final int pigeonID = 20;
         public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 
-        public static final COTSFalconSwerveConstants chosenModule =  COTSFalconSwerveConstants.SDSMK4i(COTSFalconSwerveConstants.driveGearRatios.SDSMK4i_L2);
+        public static final SwerveConstants chosenModule =  SwerveConstants.SDSMK4i();
 
         /* Drivetrain Constants */
         public static final double trackWidth = 0.40125; 
         public static final double wheelBase = 0.40125; 
-        public static final double wheelCircumference = chosenModule.wheelCircumference;
+        public static final double wheelCircumference = chosenModule.wheelCircumference_m;
 
         /* Swerve Kinematics 
          * No need to ever change this unless you are not doing a traditional rectangular/square 4 module swerve */
@@ -32,15 +32,15 @@ public final class Constants {
             new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
 
         /* Module Gear Ratios */
-        public static final double driveGearRatio = chosenModule.driveGearRatio;
-        public static final double angleGearRatio = chosenModule.angleGearRatio;
+        public static final double driveGearRatio = chosenModule.driveGearRatio_m;
+        public static final double angleGearRatio = chosenModule.angleGearRatio_m;
 
         /* Motor Inverts */
-        public static final boolean angleMotorInvert = chosenModule.angleMotorInvert;
-        public static final boolean driveMotorInvert = chosenModule.driveMotorInvert;
+        public static final boolean angleMotorInvert = chosenModule.angleMotorInvert_m;
+        public static final boolean driveMotorInvert = chosenModule.driveMotorInvert_m;
 
         /* Angle Encoder Invert */
-        public static final boolean canCoderInvert = chosenModule.canCoderInvert;
+        public static final boolean canCoderInvert = chosenModule.canCoderInvert_m;
 
         /* Swerve Current Limiting */
         public static final int angleContinuousCurrentLimit = 25;
@@ -59,10 +59,10 @@ public final class Constants {
         public static final double closedLoopRamp = 0.0;
 
         /* Angle Motor PID Values */
-        public static final double angleKP = chosenModule.angleKP;
-        public static final double angleKI = chosenModule.angleKI;
-        public static final double angleKD = chosenModule.angleKD;
-        public static final double angleKF = chosenModule.angleKF;
+        public static final double angleKP = chosenModule.angleKP_m;
+        public static final double angleKI = chosenModule.angleKI_m;
+        public static final double angleKD = chosenModule.angleKD_m;
+        public static final double angleKF = chosenModule.angleKF_m;
 
         /* Drive Motor PID Values */
         public static final double driveKP = 0.05; //TODO: This must be tuned to specific robot
