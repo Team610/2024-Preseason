@@ -73,7 +73,7 @@ public class Drivetrain extends Subsystem610 {
             SwerveDriveKinematics.desaturateWheelSpeeds(desiredModuleStates_m, VAL_MAX_SPD);
 
         for(SwerveModule mod : swerveModules_m){
-            mod.setDesiredState(desiredModuleStates_m[mod.moduleNumber], isOpenLoop);
+            mod.setDesiredState(desiredModuleStates_m[mod.moduleNumber_m], isOpenLoop);
         }
     }    
 
@@ -82,7 +82,7 @@ public class Drivetrain extends Subsystem610 {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, VAL_MAX_SPD);
         
         for(SwerveModule mod : swerveModules_m){
-            mod.setDesiredState(desiredStates[mod.moduleNumber], false);
+            mod.setDesiredState(desiredStates[mod.moduleNumber_m], false);
         }
     }    
 
@@ -97,7 +97,7 @@ public class Drivetrain extends Subsystem610 {
     public SwerveModuleState[] getModuleStates(){
         currentModuleStates_m = new SwerveModuleState[4];
         for(SwerveModule mod : swerveModules_m){
-            currentModuleStates_m[mod.moduleNumber] = mod.getState();
+            currentModuleStates_m[mod.moduleNumber_m] = mod.getState();
         }
         return currentModuleStates_m;
     }
@@ -105,7 +105,7 @@ public class Drivetrain extends Subsystem610 {
     public SwerveModulePosition[] getModulePositions(){
         modulePositions_m = new SwerveModulePosition[4];
         for(SwerveModule mod : swerveModules_m){
-            modulePositions_m[mod.moduleNumber] = mod.getPosition();
+            modulePositions_m[mod.moduleNumber_m] = mod.getPosition();
         }
         return modulePositions_m;
     }
@@ -129,9 +129,9 @@ public class Drivetrain extends Subsystem610 {
         swerveOdometry_m.update(getYaw(), getModulePositions());  
 
         for(SwerveModule mod : swerveModules_m){
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Integrated", mod.getPosition().angle.getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber_m + " Cancoder", mod.getCanCoder().getDegrees());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber_m + " Integrated", mod.getPosition().angle.getDegrees());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber_m + " Velocity", mod.getState().speedMetersPerSecond);    
         }
     }
 
