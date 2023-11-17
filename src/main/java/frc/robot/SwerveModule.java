@@ -78,7 +78,36 @@ public class SwerveModule {
     }
 
     public void resetToAbsolute(){
-        double absolutePosition = Conversions.degreesToFalcon(getCanCoder().getDegrees() - angleOffset.getDegrees(), Constants.Swerve.angleGearRatio);
+        double absolutePosition;
+        // double desiredDegreeFirst = angleOffset.getDegrees()-getCanCoder().getDegrees();
+        // double desiredDegreeSecond = angleOffset.getDegrees()-getCanCoder().getDegrees()-360;
+        // if(Math.abs(desiredDegreeFirst)>=Math.abs(desiredDegreeSecond)){
+        //     absolutePosition = Conversions.degreesToFalcon(desiredDegreeSecond, Constants.Swerve.angleGearRatio);
+        // }else{
+        //     absolutePosition = Conversions.degreesToFalcon(desiredDegreeFirst, Constants.Swerve.angleGearRatio);
+        // }
+        // mAngleMotor.setSelectedSensorPosition(absolutePosition);
+        // double absolutePosition = Conversions.degreesToFalcon(angleOffset.getDegrees() - getCanCoder().getDegrees(), Constants.Swerve.angleGearRatio);
+        // mAngleMotor.setSelectedSensorPosition(absolutePosition);
+        double offsetFirst = angleOffset.getDegrees();
+        double offsetSecond = angleOffset.getDegrees()-360;
+        double errorOne = offsetFirst - getCanCoder().getDegrees();
+        double errorTwo = offsetFirst - getCanCoder().getDegrees() + 180;
+        double errorThree = offsetSecond - getCanCoder().getDegrees();
+        double errorFour = offsetSecond - getCanCoder().getDegrees() + 180;
+        if(Math.abs(errorOne)<=90){
+            absolutePosition = Conversions.degreesToFalcon(errorOne, Constants.Swerve.angleGearRatio);
+            System.out.println("error1" + errorOne + "offset" + offsetFirst);
+        }else if(Math.abs(errorTwo)<=90){
+            absolutePosition = Conversions.degreesToFalcon(errorTwo, Constants.Swerve.angleGearRatio);
+            System.out.println("error2" + errorTwo + "offset" + offsetFirst);
+        }else if(Math.abs(errorThree)<=90){
+            absolutePosition = Conversions.degreesToFalcon(errorThree, Constants.Swerve.angleGearRatio);
+            System.out.println("error3" + errorThree + "offset" + offsetSecond);
+        }else{
+            absolutePosition = Conversions.degreesToFalcon(errorFour, Constants.Swerve.angleGearRatio);
+            System.out.println("error4" + errorFour + "offset" + offsetSecond);
+        }
         mAngleMotor.setSelectedSensorPosition(absolutePosition);
     }
 

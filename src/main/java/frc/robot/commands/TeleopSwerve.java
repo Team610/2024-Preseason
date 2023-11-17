@@ -19,21 +19,21 @@ public class TeleopSwerve extends CommandBase {
     private DoubleSupplier rotationSup;
     private boolean robotCentric;
 
-    public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup) {
+    public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
 
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
         this.rotationSup = rotationSup;
-        this.robotCentric = false;
+        this.robotCentric = true;
     }
 
     @Override
     public void execute() {
         /* Get Values, Deadband*/
 
-        if(driver.getRawButtonPressed(2)){
+        if(driver.getRawButtonPressed(5)){
             this.robotCentric = !this.robotCentric;
         }
 
