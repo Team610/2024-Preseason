@@ -11,7 +11,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 
-public class TeleopSwerve extends CommandBase {    
+public class SwerveArcadeDrive extends CommandBase {    
     private Drivetrain drivetrainInst_m;    
     private DoubleSupplier translationSup_m;
     private DoubleSupplier strafeSup_m;
@@ -19,7 +19,7 @@ public class TeleopSwerve extends CommandBase {
     private BooleanSupplier robotCentricSup_s;
     private static int counter_s;
 
-    public TeleopSwerve(DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup) {
+    public SwerveArcadeDrive(DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup) {
         drivetrainInst_m = Drivetrain.getInstance();
         addRequirements(drivetrainInst_m);
         translationSup_m = translationSup;
