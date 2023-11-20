@@ -21,7 +21,7 @@ public class TurnDeg extends CommandBase {
         /* Drive */
         s_Swerve.drive(
             new Translation2d(0, 0).times(Constants.Swerve.maxSpeed), 
-            (180) * Constants.Swerve.maxAngularVelocity, 
+            (180) * 8, 
             !true, 
             true
         );
