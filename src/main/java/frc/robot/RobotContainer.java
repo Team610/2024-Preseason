@@ -1,5 +1,7 @@
 package frc.robot;
 
+import com.ctre.phoenix.sensors.Pigeon2;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -23,6 +25,7 @@ import frc.robot.subsystems.*;
 public class RobotContainer {
     /* Controllers */
     public static Joystick driver = new Joystick(0);
+    public static Pigeon2 pigeot = new Pigeon2(20, "Vulture");
 
     /* Drive Controls */
     private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -34,7 +37,7 @@ public class RobotContainer {
     private final JoystickButton turnAround = new JoystickButton(driver, XboxController.Button.kA.value);
 
     /* Subsystems */
-    private final Swerve s_Swerve = new Swerve();
+    public static Swerve s_Swerve = new Swerve();
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -62,7 +65,7 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-        turnAround.onTrue(new TurnDeg(s_Swerve));
+        turnAround.whileTrue(new TurnDeg(s_Swerve));
     }
 
     /**

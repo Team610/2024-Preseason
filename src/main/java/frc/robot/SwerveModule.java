@@ -4,10 +4,12 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 import frc.lib.math.Conversions;
 import frc.lib.util.CTREModuleState;
 import frc.lib.util.SwerveModuleConstants;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -132,10 +134,21 @@ public class SwerveModule {
 
         return Rotation2d.fromDegrees(makePositiveDegrees(steerAngle));
     }
+    private void waitForCanCoder(){
+        for(int i = 0; i < 100; ++i){
+            angleEncoder.getAbsolutePosition();
+            if(angleEncoder.getLastError() == ErrorCode.OK){
+                break;
+            }
+            Timer.delay(0.01);
+            CANcoderInitTime+=10;
+        }
+    }
 
     public void resetToAbsolute(){
+        waitForCanCoder();
         //waitForCanCoder();
-
+        System.out.print("yo");
         double absolutePosition = Conversions.degreesToFalcon(makePositiveDegrees(getCanCoder().getDegrees() - angleOffset.getDegrees()), Constants.Swerve.angleGearRatio);
         mAngleMotor.setSelectedSensorPosition(absolutePosition);
     }
@@ -145,7 +158,7 @@ public class SwerveModule {
         angleEncoder.configAllSettings(Robot.ctreConfigs.swerveCanCoderConfig);
     }
 
-    private void configAngleMotor(){
+    public void configAngleMotor(){
         mAngleMotor.configFactoryDefault();
         mAngleMotor.configAllSettings(Robot.ctreConfigs.swerveAngleFXConfig);
         mAngleMotor.setInverted(Constants.Swerve.angleMotorInvert);
