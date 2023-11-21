@@ -9,13 +9,19 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 import com.ctre.phoenix.sensors.Pigeon2;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Swerve extends SubsystemBase {
@@ -74,6 +80,35 @@ public class Swerve extends SubsystemBase {
         }
     }    
 
+    public void setModulesStraight() {
+        for (SwerveModule mod : mSwerveMods) {
+          mod.setDesiredState(new SwerveModuleState(0.05, Rotation2d.fromDegrees(0)), true);
+        }
+    }
+
+    public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
+        return new SequentialCommandGroup(
+             new InstantCommand(() -> {
+               // Reset odometry for the first path you run during auto
+               if(isFirstPath){
+                   this.resetOdometry(traj.getInitialHolonomicPose());
+                   //this.zeroGyro();
+               }
+             }),
+             new PPSwerveControllerCommand(
+                 traj, 
+                 this::getPose, // Pose supplier
+                 Constants.Swerve.swerveKinematics, // SwerveDriveKinematics
+                 new PIDController(0, 0, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+                 new PIDController(0, 0, 0), // Y controller (usually the same values as X controller)
+                 new PIDController(0.61, 0.01, 0.13), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+                 this::setModuleStates, // Module states consumer
+                  false, 
+                this // Requires this drive subsystem
+             )
+         );
+      }
+
     public Pose2d getPose() {
         return swerveOdometry.getPoseMeters();
     }
@@ -100,6 +135,13 @@ public class Swerve extends SubsystemBase {
 
     public void zeroGyro(){
         gyro.setYaw(0);
+    }
+
+    public void resetSwerveModuleAngles() {
+        for (SwerveModule mod : mSwerveMods) {
+          mod.resetToAbsolute();
+          mod.setDesiredState(new SwerveModuleState(0.05, Rotation2d.fromDegrees(0)), true);
+        }
     }
 
     public Rotation2d getYaw() {
