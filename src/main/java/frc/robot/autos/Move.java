@@ -11,7 +11,7 @@ import frc.robot.subsystems.Swerve;
 
 public class Move extends SequentialCommandGroup{
     public Move(Swerve s_Swerve) {
-        PathPlannerTrajectory move = PathPlanner.loadPath("Straight", new PathConstraints(2, 2));
+        PathPlannerTrajectory move = PathPlanner.loadPath("Group", new PathConstraints(2, 2));
         addCommands(
                 new InstantCommand(() -> s_Swerve.zeroGyro()),
                 new InstantCommand(() -> s_Swerve.resetSwerveModuleAngles()),
