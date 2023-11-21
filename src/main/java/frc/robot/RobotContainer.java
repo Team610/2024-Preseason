@@ -29,6 +29,11 @@ public class RobotContainer {
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kStart.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+    private final JoystickButton spinButton = new JoystickButton(driver, XboxController.Button.kX.value);
+    
+    //temp button to end Spin command
+    //public final JoystickButton cancelButton = new JoystickButton(driver, XboxController.Button.kY.value);
+
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
@@ -50,7 +55,7 @@ public class RobotContainer {
         configureButtonBindings();
     }
 
-    /**
+    /*
      * Use this method to define your button->command mappings. Buttons can be created by
      * instantiating a {@link GenericHID} or one of its subclasses ({@link
      * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
@@ -59,6 +64,7 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
+        spinButton.onTrue(new Spin(s_Swerve, 180, () -> -driver.getRawAxis(translationAxis), ()-> -driver.getRawAxis(strafeAxis), () -> false));
     }
 
     /**
