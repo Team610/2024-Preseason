@@ -48,7 +48,16 @@ public class Spin extends CommandBase{
         //Only using proportional term of PID, IDK how to use the PID controller class
         double anglePoisiton = s_Swerve.getYaw().getDegrees();
         double error = mAngle - anglePoisiton;
+       
+        /*if(Math.abs(error) > 180) {
+            rotation = 0.01 * error;
+        } else {
+            rotation = -0.01 * error;
+        }*/
+        System.out.println(error);
         rotation = -0.01 * error;
+        
+        
 
         s_Swerve.drive(
             new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed), 
