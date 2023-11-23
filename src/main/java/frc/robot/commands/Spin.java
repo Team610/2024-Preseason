@@ -57,7 +57,7 @@ public class Spin extends CommandBase{
             rotation = 0.01 * error;
         } else {
             rotation = -0.01 * error;
-        }*/
+        }*/ 
       //  System.out.println(error);
       //  rotation = pid_s.getP() * error;*/
         
