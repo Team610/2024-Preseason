@@ -17,6 +17,7 @@ import static frc.robot.Constants.Drivetrain.*;
 
 public class RobotContainer {
   public static SwerveDrivetrain drivetrainInst_s;
+  public static Vision visionInst_s;
   public static CommandXboxController driver_s;
   public static CommandXboxController operator_s;
   public static WPI_Pigeon2 pidgey_s;
