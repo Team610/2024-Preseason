@@ -57,6 +57,7 @@ public class PIDController implements Sendable, AutoCloseable {
 
   private boolean m_haveMeasurement;
   private boolean m_haveSetpoint;
+  private int id;
 
   /**
    * Allocates a PIDController with the given constants for kp, ki, and kd and a default period of
@@ -66,8 +67,9 @@ public class PIDController implements Sendable, AutoCloseable {
    * @param ki The integral coefficient.
    * @param kd The derivative coefficient.
    */
-  public PIDController(double kp, double ki, double kd) {
+  public PIDController(double kp, double ki, double kd, int id) {
     this(kp, ki, kd, 0.02);
+    this.id = id;
   }
 
   /**
@@ -358,7 +360,10 @@ public class PIDController implements Sendable, AutoCloseable {
               m_minimumIntegral / m_ki,
               m_maximumIntegral / m_ki);
     }
-
+    System.out.println("Position Error: " + id + " " + m_positionError);
+    System.out.println("Total Error: " + id + " " + m_totalError);
+    System.out.println("Velocity Error: " + id + " " +  m_velocityError);
+    System.out.println("Setpoint: " + id + " " + getSetpoint());
     return m_kp * m_positionError + m_ki * m_totalError + m_kd * m_velocityError;
   }
 
