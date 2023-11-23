@@ -51,14 +51,21 @@ public class SwerveModule {
         setSpeed(desiredState, isOpenLoop);
     }
 
+    public void setLastAngle(double angle){
+        lastAngle = new Rotation2d(angle);
+    }
+
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop){
         if(isOpenLoop){
             double percentOutput = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
             mDriveMotor.set(ControlMode.PercentOutput, percentOutput);
+            System.out.println(percentOutput);
         }
         else {
             double velocity = Conversions.MPSToFalcon(desiredState.speedMetersPerSecond, Constants.Swerve.wheelCircumference, Constants.Swerve.driveGearRatio);
             mDriveMotor.set(ControlMode.Velocity, velocity, DemandType.ArbitraryFeedForward, feedforward.calculate(desiredState.speedMetersPerSecond));
+            System.out.println("Drive velocity: " + velocity);
+            System.out.println("Feedforward value" + feedforward.calculate(desiredState.speedMetersPerSecond));
         }
     }
 
@@ -66,6 +73,7 @@ public class SwerveModule {
         Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.Swerve.maxSpeed * 0.01)) ? lastAngle : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
         
         mAngleMotor.set(ControlMode.Position, Conversions.degreesToFalcon(angle.getDegrees(), Constants.Swerve.angleGearRatio));
+        System.out.println("angle "+angle);
         lastAngle = angle;
     }
 

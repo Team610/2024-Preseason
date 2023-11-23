@@ -10,9 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.pathplanner.lib.PathPlannerTrajectory;
-import frc.robot.subsystems.PPSwerveControllerCommand;
 
-import frc.robot.subsystems.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -133,6 +131,12 @@ public class Swerve extends SubsystemBase {
         return positions;
     }
 
+    public void setLastAngles(double angle){
+        for(SwerveModule mod : mSwerveMods){
+            mod.setLastAngle(angle);
+        }
+    }
+
     public void zeroGyro(){
         gyro.setYaw(0);
     }
@@ -164,4 +168,6 @@ public class Swerve extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         }
     }
+
+    
 }
