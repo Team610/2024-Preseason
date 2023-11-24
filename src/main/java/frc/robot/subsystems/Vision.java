@@ -9,24 +9,17 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.util.Subsystem610;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.Vision.*;
 
-public class Vision extends Subsystem610 {
+public class Vision extends SubsystemBase {
     private static Vision visionInst_s;
-
-
-
     private int ledMode_m;
     private int tv_m;
     private int distanceSetPoint_m;
     private NetworkTable networkTable_m;
     private Shuffleboard visionTab;
-
-
-
-
     public static Vision getInstance(){
         if (visionInst_s == null){
             visionInst_s = new Vision();
@@ -35,7 +28,6 @@ public class Vision extends Subsystem610 {
     }
 
     private Vision(){
-        super("Limelight");
 
         ledMode_m=0;
 
@@ -102,7 +94,7 @@ public class Vision extends Subsystem610 {
      */
     public double calcTargetDistance(){
         //calculate the x distance to the goal
-        return tv_m == 0 ? 0 : 209.0 / Math.tan(Math.toRadians(VAL_MOUNT_ANGLE + calcTy()));
+        return tv_m == 0 ? 0 : 24 / Math.tan(Math.toRadians(VAL_MOUNT_ANGLE + calcTy()));
     }
 
     public boolean checkTargetDistance(){
@@ -110,25 +102,19 @@ public class Vision extends Subsystem610 {
     }
 
     public void writeDashboard(){
-        SmartDashboard.putNumber("distance", Math.round(calcTargetDistance() * 1e5)/ 1e5);
+        SmartDashboard.putBoolean("test", true);
+        SmartDashboard.putNumber("distance!", Math.round(calcTargetDistance() * 1e5)/ 1e5);
     }
     public void periodic(){
         tv_m = (int)networkTable_m.getEntry("tv").getDouble(0.0);
         writeDashboard();
+        System.out.println(Math.round(calcTargetDistance() * 1e5)/ 1e5);
     }
-
     // Required Method
     @Override
     public void initSendable(SendableBuilder builder) {
         // TODO Auto-generated method stub
         
     }
-
-    //Required Method
-    @Override
-    public void addToDriveTab(ShuffleboardTab tab) {
-        // TODO Auto-generated method stub
-        
-    }
-    
 }
+ 
