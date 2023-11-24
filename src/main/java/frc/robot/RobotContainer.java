@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.T_Vision_Distance;
 import frc.robot.subsystems.Vision;
 
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
@@ -25,7 +26,9 @@ public class RobotContainer {
     pidgey_s = new WPI_Pigeon2(CAN_PIDGEY, CAN_BUS_NAME);
     visionInst_s = Vision.getInstance();
   }
-  private void configureBindings() {}
+  private void configureBindings() {
+    driver_s.start().whileTrue(new T_Vision_Distance());
+  }
   public Command getAutonomousCommand() {
     return Commands.print("No autonomous command configured");
   }
