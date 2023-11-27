@@ -99,7 +99,7 @@ public class Swerve extends SubsystemBase {
                  Constants.Swerve.swerveKinematics, // SwerveDriveKinematics
                  new PIDController(6.10/2, 0.1, 0, 1), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
                  new PIDController(6.10/2, 0.1, 0, 2), // Y controller (usually the same values as X controller)
-                 new PIDController(0.29, 0.001, 0.13, 3), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+                 new PIDController(0.29, 0.0, 0.13, 3), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
                  this::setModuleStates, // Module states consumer
                   false, 
                 this // Requires this drive subsystem
@@ -143,8 +143,25 @@ public class Swerve extends SubsystemBase {
 
     public void resetSwerveModuleAngles() {
         for (SwerveModule mod : mSwerveMods) {
-          mod.resetToAbsolute();
-          mod.setDesiredState(new SwerveModuleState(0.05, Rotation2d.fromDegrees(0)), true);
+            double rotation2dBefore = mod.getCanCoder().getDegrees();
+            double angleOffsetBefore1 = mod.getOffset().getDegrees();
+            double angleOffsetBefore2 = -1*Math.abs(mod.getOffset().getDegrees()-360);
+            double error1 = angleOffsetBefore1 - rotation2dBefore;
+            double error2 = angleOffsetBefore2 - rotation2dBefore;
+            error1%=360;
+            error2%=360;
+            double move;
+            if(Math.abs(error1)<=90){
+                move = error1;
+            }else if(Math.abs(error1+180)<=90){
+                move = error1+180;
+            }else if(Math.abs(error2)<=90){
+                move = error2;
+            }else{
+                move = error2+180;
+            }
+            mod.setDesiredState(new SwerveModuleState(0.05, Rotation2d.fromDegrees(move)), true);
+            mod.resetToAbsolute();
         }
     }
 

@@ -17,6 +17,7 @@ public class TeleopSwerve extends CommandBase {
     private DoubleSupplier strafeSup;
     private DoubleSupplier rotationSup;
     private BooleanSupplier robotCentricSup;
+    private boolean flag;
 
     public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup) {
         this.s_Swerve = s_Swerve;
@@ -26,6 +27,12 @@ public class TeleopSwerve extends CommandBase {
         this.strafeSup = strafeSup;
         this.rotationSup = rotationSup;
         this.robotCentricSup = robotCentricSup;
+        this.flag = false;
+    }
+
+    @Override
+    public void initialize(){
+        s_Swerve.resetModulesToAbsolute();
     }
 
     @Override
@@ -42,10 +49,5 @@ public class TeleopSwerve extends CommandBase {
             !robotCentricSup.getAsBoolean(), 
             true
         );
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        s_Swerve.setLastAngles(0);
     }
 }

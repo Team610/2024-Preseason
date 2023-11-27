@@ -77,8 +77,12 @@ public class SwerveModule {
         lastAngle = angle;
     }
 
-    private Rotation2d getAngle(){
+    public Rotation2d getAngle(){
         return Rotation2d.fromDegrees(Conversions.falconToDegrees(mAngleMotor.getSelectedSensorPosition(), Constants.Swerve.angleGearRatio));
+    }
+
+    public Rotation2d getOffset(){
+        return angleOffset;
     }
 
     public Rotation2d getCanCoder(){

@@ -143,7 +143,7 @@ public class PPSwerveControllerCommand extends CommandBase {
    *     the field.
    * @param requirements The subsystems to require.
    */
-  public PPSwerveControllerCommand(
+  public  PPSwerveControllerCommand(
       PathPlannerTrajectory trajectory,
       Supplier<Pose2d> poseSupplier,
       SwerveDriveKinematics kinematics,
@@ -273,16 +273,6 @@ public class PPSwerveControllerCommand extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     this.timer.stop();
-
-    if (interrupted
-        || Math.abs(transformedTrajectory.getEndState().velocityMetersPerSecond) < 0.1) {
-      if (useKinematics) {
-        this.outputModuleStates.accept(
-            this.kinematics.toSwerveModuleStates(new ChassisSpeeds(0, 0, 0)));
-      } else {
-        this.outputChassisSpeeds.accept(new ChassisSpeeds());
-      }
-    }
   }
 
   @Override
