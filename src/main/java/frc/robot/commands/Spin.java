@@ -9,7 +9,6 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -24,8 +23,6 @@ public class Spin extends CommandBase{
 
     private PIDController pid_s;
     
-    //private PIDController pid_s;
-    
     public Spin(Swerve s_Swerve, double angle, DoubleSupplier translationSup, DoubleSupplier strafeSup, BooleanSupplier robotCentricSup) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
@@ -35,13 +32,9 @@ public class Spin extends CommandBase{
         this.strafeSup = strafeSup;
         this.robotCentricSup = robotCentricSup;
 
-        this.pid_s = new PIDController(0.1, 0, 0.01);
-       /*  this.pid_s = new ProfiledPIDController(0.1, 0, 0.01, new TrapezoidProfile.Constraints(
-            Constants.AutoConstants.kMaxSpeedMetersPerSecond, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));*/
-        pid_s.enableContinuousInput(0, 360);
-       
-    }
+        this.pid_s = new PIDController(0.01, 0, 0);
 
+    }
     @Override
     public void initialize() {
 
