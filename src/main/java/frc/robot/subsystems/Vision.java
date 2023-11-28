@@ -1,10 +1,9 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.cscore.HttpCamera;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -13,49 +12,50 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.Vision.*;
 
-public class Vision extends SubsystemBase {
+
+public class Vision extends SubsystemBase{
     private static Vision visionInst_s;
+
     private int ledMode_m;
     private int tv_m;
-    private int distanceSetPoint_m;
     private NetworkTable networkTable_m;
-    private Shuffleboard visionTab;
-    public static Vision getInstance(){
-        if (visionInst_s == null){
+    private PIDController pidAngle_m;
+    private boolean isAimed_m;
+    private int conePosition_m;
+    private double angleSetPoint_m;
+    private int distanceSetPoint_m;
+    public ShuffleboardTab visionTab_m;
+
+    public static Vision getInstance() {
+        if (visionInst_s == null)
             visionInst_s = new Vision();
-        }
         return visionInst_s;
     }
 
-    private Vision(){
-
-        ledMode_m=0;
-
-        distanceSetPoint_m = 372;
+    private Vision() {
         
-        ShuffleboardTab visionTab = Shuffleboard.getTab("test");
+        ledMode_m = 0;
+        conePosition_m = 0;
+        angleSetPoint_m = 0;
+        distanceSetPoint_m = 372;
 
-        visionTab.add("Limelight", new HttpCamera("limelight","http://10.6.10.87:5800/stream.mjpg "))
+        visionTab_m = Shuffleboard.getTab("test");
+
+        visionTab_m.add("Limelight", new HttpCamera("limelight", "http://10.6.10.12:5800/stream.mjpg"))
             .withWidget(BuiltInWidgets.kCameraStream)
             .withPosition(0, 0)
-            .withSize(3,3);
-        
-        visionTab.add("ledMode",ledMode_m)
-            .withPosition(4,0)
-            .withSize(2, 2);
-            
-        visionTab.add("camMode",tv_m)
-            .withPosition(7, 7)
-            .withSize(2,2);
+            .withSize(3, 3);
 
 
+        //make sure the pipeline team number is set to 610
         networkTable_m = NetworkTableInstance.getDefault().getTable("limelight");
 
         networkTable_m.getEntry("ledMode").setNumber(ledMode_m);
+        setCamMode(0);
+        pidAngle_m = new PIDController(VAL_ANGLE_KP, VAL_ANGLE_KI, VAL_ANGLE_KD);
+        }
 
-    }
-
-    public int getLedMode(){
+    public int getLedMode() {
         return ledMode_m;
     }
 
@@ -68,7 +68,26 @@ public class Vision extends SubsystemBase {
      * @param ledMode
      */
     public void setLedMode(int ledMode){
-        networkTable_m.getEntry("camMode").setNumber(ledMode);
+        networkTable_m.getEntry("ledMode").setNumber(ledMode);
+    }
+
+    public int getConePosition(){
+        return conePosition_m;
+    }
+
+    public void setConePosition(int newPosition){
+        conePosition_m = newPosition;
+        if (conePosition_m == 0){
+            angleSetPoint_m = 0;
+        }
+        //cone is to the left
+        else if (conePosition_m == 1){
+            angleSetPoint_m = VAL_LEFT_ANGLE_OFSET;
+        }
+        //cone is to the right
+        else{
+            angleSetPoint_m = VAL_RIGHT_ANGLE_OFSET;
+        }
     }
 
     /**
@@ -79,42 +98,69 @@ public class Vision extends SubsystemBase {
         // ternary operator to return the horizontal angle if a valid target is detected
         return networkTable_m.getEntry("tx").getDouble(0.0);
     }
-    
+
     /**
      * Fetch the vertical offset from crosshair to target (ty)
      * @return ty
      */
     public double calcTy(){
-        //get ty from the network table
         return tv_m == 0 ? 0 : networkTable_m.getEntry("ty").getDouble(0.0);
+    }
+
+    public double calcTa(){
+        return tv_m == 0 ? 0: networkTable_m.getEntry("ta").getDouble(0.0);
+    }
+
+    public double[] calcBotpose(){
+        return tv_m == 0 ? new double[]{0, 0, 0, 0, 0, 0}: networkTable_m.getEntry("t6r_ts").getDoubleArray(new double[]{0, 0, 0, 0, 0, 0});
     }
 
     /**
      * @return The distance from the Limelight to the target
      */
-    public double calcTargetDistance(){
-        //calculate the x distance to the goal
-        return tv_m == 0 ? 0 : 24 / Math.tan(Math.toRadians(VAL_MOUNT_ANGLE + calcTy()));
+    public double calcDistance(){
+        return tv_m == 0 ? 0 : 209.0 / Math.tan(Math.toRadians(21 + calcTy()));
     }
 
-    public boolean checkTargetDistance(){
-        return calcTargetDistance() > 0 ? calcTargetDistance() - distanceSetPoint_m < 10 : false;
+    public boolean checkDistance(){
+        return calcDistance() > 0 ? calcDistance() - distanceSetPoint_m < 10 : false ;
+    }
+
+    /**
+     * @return Boolean if the limelight is within the set threshold range
+     */
+    public boolean checkAim(){
+        return Math.abs(calcTx()) > 0 ? isAimed_m = Math.abs(calcTx()) < 2 && tv_m > 0 && calcDistance() - distanceSetPoint_m < 10 : false;
+    }
+
+    public int getTv(){
+        return tv_m;
+    }
+
+    public double[] getAimPID(){
+        double steeringAdjust = pidAngle_m.calculate(calcTx(), angleSetPoint_m);
+
+        return new double[]{-steeringAdjust, steeringAdjust};
+
     }
 
     public void writeDashboard(){
-        SmartDashboard.putBoolean("test", true);
-        SmartDashboard.putNumber("distance!", Math.round(calcTargetDistance() * 1e5)/ 1e5);
+        SmartDashboard.putNumber("calcTx", Math.round(calcTx() * 1e5) / 1e5);
+        SmartDashboard.putNumber("Aimed", getTv());
+        SmartDashboard.putNumber("calcTy", calcTy());
+        SmartDashboard.putNumber("Distance", calcDistance());
+        SmartDashboard.putNumber("Botpose1", calcBotpose()[0]);
+        SmartDashboard.putNumber("Botpose2", calcBotpose()[1]);
+        SmartDashboard.putNumber("Botpose3", calcBotpose()[2]);
+        SmartDashboard.putNumber("Botpose4", calcBotpose()[3]);
+        SmartDashboard.putNumber("Botpose5", calcBotpose()[4]);
+        SmartDashboard.putNumber("Botpose6", calcBotpose()[5]);
     }
-    public void periodic(){
-        tv_m = (int)networkTable_m.getEntry("tv").getDouble(0.0);
-        writeDashboard();
-        System.out.println(Math.round(calcTargetDistance() * 1e5)/ 1e5);
-    }
-    // Required Method
+
     @Override
-    public void initSendable(SendableBuilder builder) {
-        // TODO Auto-generated method stub
-        
+    public void periodic() {
+        tv_m = (int) networkTable_m.getEntry("tv").getDouble(0.0);
+        writeDashboard();
     }
+   
 }
- 

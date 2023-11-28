@@ -3,9 +3,9 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-public class T_Vision_Distance extends CommandBase{
+public class T_Vision_Light extends CommandBase{
 
-    public T_Vision_Distance() {
+    public T_Vision_Light() {
         addRequirements(RobotContainer.visionInst_s);
 
     }
@@ -24,17 +24,13 @@ public class T_Vision_Distance extends CommandBase{
      */
     @Override
     public void execute() {
-        System.out.println(RobotContainer.visionInst_s.calcTargetDistance());
     }
 
     /**
      * Turns limelight off
      */
     @Override
-    public void end(boolean interrupted) {
-        RobotContainer.visionInst_s.setCamMode(1);
-        RobotContainer.visionInst_s.setLedMode(1);
-    }
+    public void end(boolean interrupted) {}    
 
     @Override
     public boolean isFinished() {
