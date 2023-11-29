@@ -11,7 +11,9 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 
@@ -29,13 +31,12 @@ public class Travel extends CommandBase {
   private PIDController pidX_s;
   private PIDController pidY_s;
 
-//  private ProfiledPIDController pidX_s;
-//  private ProfiledPIDController pidY_s;
-
   private BooleanSupplier robotCentricSup;
 
+  private JoystickButton cancelButton;
+
   /** Creates a new Travel. */
-  public Travel(Swerve s_Swerve, double mXPos, double mYPos, BooleanSupplier robotCentricSup) {
+  public Travel(Swerve s_Swerve, double mXPos, double mYPos, BooleanSupplier robotCentricSup, JoystickButton cancelButton) {
     this.s_Swerve = s_Swerve;
     addRequirements(s_Swerve);
 
@@ -43,15 +44,13 @@ public class Travel extends CommandBase {
     this.mYPos = mYPos;
 
 
-    this.pidX_s = new PIDController(0.1, 0, 0);
-    this.pidY_s = new PIDController(0.1,0,0);
+    this.pidX_s = new PIDController(0.5, 0.1, 0.05);
+    this.pidY_s = new PIDController(0.5,0.1,0.05);
+
+    this.cancelButton = cancelButton;
 
 
-
-    /*this.pidX_s = new ProfiledPIDController(0.1, 0, 0, new TrapezoidProfile.Constraints(
-      Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecond, Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecondSquared));
-    this.pidY_s = new ProfiledPIDController(0.1,0,0, new TrapezoidProfile.Constraints(
-      Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecond, Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecondSquared));*/
+    
 
 
 
@@ -85,7 +84,7 @@ public class Travel extends CommandBase {
   @Override
   public boolean isFinished() {
     
-    if ((Math.abs(s_Swerve.getPose().getX() - mXPos) < 1) && (Math.abs(s_Swerve.getPose().getY() - mYPos) < 1)) {
+    if (((Math.abs(s_Swerve.getPose().getX() - mXPos) < 0.1) && (Math.abs(s_Swerve.getPose().getY() - mYPos) < 0.1)) || cancelButton.getAsBoolean()) {
       return true;
   } else {
       return false;

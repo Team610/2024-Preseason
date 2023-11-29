@@ -30,9 +30,10 @@ public class RobotContainer {
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kStart.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
     private final JoystickButton spinButton = new JoystickButton(driver, XboxController.Button.kX.value);
+    private final JoystickButton travelButton = new JoystickButton(driver, XboxController.Button.kY.value);
 
     //button to end Spin or Travel command
-    public final JoystickButton cancelButton = new JoystickButton(driver, XboxController.Button.kA.value);
+    private final JoystickButton cancelButton = new JoystickButton(driver, XboxController.Button.kA.value);
 
 
     /* Subsystems */
@@ -64,6 +65,7 @@ public class RobotContainer {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
         spinButton.onTrue(new Spin(s_Swerve, 135, () -> -driver.getRawAxis(translationAxis), ()-> -driver.getRawAxis(strafeAxis), () -> false, cancelButton));
+        travelButton.onTrue(new Travel(s_Swerve, 0, 0, () -> false, cancelButton));
     }
 
     /**

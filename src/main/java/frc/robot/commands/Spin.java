@@ -36,7 +36,7 @@ public class Spin extends CommandBase{
         this.strafeSup = strafeSup;
         this.robotCentricSup = robotCentricSup;
 
-        this.pid_s = new PIDController(0.01, 0, 0);
+        this.pid_s = new PIDController(0.01, 0.005, 0.001);
 
         this.cancelButton = cancelButton;
 
