@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 
@@ -12,6 +13,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Joystick;
 
 public class Spin extends CommandBase{
 
@@ -21,9 +23,11 @@ public class Spin extends CommandBase{
     private DoubleSupplier translationSup;
     private DoubleSupplier strafeSup;
 
+    private JoystickButton cancelButton;
+
     private PIDController pid_s;
     
-    public Spin(Swerve s_Swerve, double angle, DoubleSupplier translationSup, DoubleSupplier strafeSup, BooleanSupplier robotCentricSup) {
+    public Spin(Swerve s_Swerve, double angle, DoubleSupplier translationSup, DoubleSupplier strafeSup, BooleanSupplier robotCentricSup, JoystickButton cancelButton) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
 
@@ -33,6 +37,8 @@ public class Spin extends CommandBase{
         this.robotCentricSup = robotCentricSup;
 
         this.pid_s = new PIDController(0.01, 0, 0);
+
+        this.cancelButton = cancelButton;
 
     }
     @Override
@@ -64,7 +70,7 @@ public class Spin extends CommandBase{
 
     @Override
     public boolean isFinished() {
-        if (Math.abs(s_Swerve.getYaw().getDegrees() - mAngle) < 10) {
+        if (Math.abs(s_Swerve.getYaw().getDegrees() - mAngle) < 10 || cancelButton.getAsBoolean()) {
             return true;
         } else {
             return false;
