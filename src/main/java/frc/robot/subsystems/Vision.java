@@ -32,7 +32,7 @@ public class Vision extends SubsystemBase{
         return visionInst_s;
     }
 
-    private Vision() {
+    public Vision() {
         
         ledMode_m = 0;
         conePosition_m = 0;
