@@ -15,6 +15,7 @@ import frc.robot.subsystems.Vision;
 
 public class T_Vision_Drive extends CommandBase {
     private static final TrapezoidProfile.Constraints X_CONSTRAINTS = new TrapezoidProfile.Constraints(2, 2);
+    //TODO untuned values make me sad
     private final ProfiledPIDController pidX_s = new ProfiledPIDController(0.1, 0.001, 0, X_CONSTRAINTS);
     PIDController pidY_s = new PIDController(0.2, 0.01, 0);
     PIDController pidAng_s = new PIDController(0.15, 0.0005, 0);
@@ -34,7 +35,7 @@ public class T_Vision_Drive extends CommandBase {
         pidY_s.setSetpoint(20.48);
         pidX_s.setTolerance(1);
         pidY_s.setTolerance(0.5);
-        visionInst_s.setPipeline(0);
+        visionInst_s.setPipeline(0); //TODO make sure pipeline is right
         isInPosCnt = 0;
         actInPos = false;
     }
@@ -54,7 +55,7 @@ public class T_Vision_Drive extends CommandBase {
             SmartDashboard.putNumber("rSpeed",rSpeed);
             
             swerveInst_s.drive(translation, rSpeed, false, true);
-            if (Math.abs(visionInst_s.calcTy() - 0) < 0.5) isInPosCnt++;
+            if (Math.abs(visionInst_s.calcTy() - 0) < 0.5) isInPosCnt++; //TODO tune???
             else isInPosCnt = 0;
 
             if (isInPosCnt > 20) actInPos = true;
