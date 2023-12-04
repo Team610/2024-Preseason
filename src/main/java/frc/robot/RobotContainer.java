@@ -18,7 +18,7 @@ import frc.robot.subsystems.*;
  */
 public class RobotContainer {
     /* Controllers */
-    private final Joystick driver = new Joystick(0);
+    public static Joystick driver = new Joystick(0);
     public static Vision visionInst_s = new Vision();
 
     /* Drive Controls */
@@ -28,7 +28,6 @@ public class RobotContainer {
 
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kStart.value);
-    private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
     private final JoystickButton spinButton = new JoystickButton(driver, XboxController.Button.kX.value);
     private final JoystickButton travelButton = new JoystickButton(driver, XboxController.Button.kY.value);
     private final JoystickButton visionButton = new JoystickButton(driver, XboxController.Button.kB.value);
@@ -48,8 +47,7 @@ public class RobotContainer {
                 s_Swerve, 
                 () -> -driver.getRawAxis(translationAxis), 
                 () -> -driver.getRawAxis(strafeAxis), 
-                () -> -driver.getRawAxis(rotationAxis), 
-                () -> false
+                () -> -driver.getRawAxis(rotationAxis)
             )
         );
 
