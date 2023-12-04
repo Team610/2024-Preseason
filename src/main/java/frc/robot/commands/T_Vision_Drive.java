@@ -30,9 +30,9 @@ public class T_Vision_Drive extends CommandBase {
 
     @Override
     public void initialize() {
-        pidX_s.setGoal(0);
+        pidX_s.setGoal(0); //! this should be fine
         pidAng_s.setSetpoint(180);
-        pidY_s.setSetpoint(20.48);
+        pidY_s.setSetpoint(0); //TODO Hello darkness my old friend
         pidX_s.setTolerance(1);
         pidY_s.setTolerance(0.5);
         visionInst_s.setPipeline(0); //TODO make sure pipeline is right
