@@ -15,12 +15,10 @@ import static frc.robot.Constants.Vision.*;
 
 public class Vision extends SubsystemBase{
     private static Vision visionInst_s;
-
     private int ledMode_m;
     private int tv_m;
     private NetworkTable networkTable_m;
     private PIDController pidAngle_m;
-    private boolean isAimed_m;
     private int conePosition_m;
     private double angleSetPoint_m;
     private int distanceSetPoint_m;
@@ -33,7 +31,6 @@ public class Vision extends SubsystemBase{
     }
 
     public Vision() {
-        
         ledMode_m = 0;
         conePosition_m = 0;
         angleSetPoint_m = 0;
@@ -41,7 +38,7 @@ public class Vision extends SubsystemBase{
 
         visionTab_m = Shuffleboard.getTab("test");
 
-        visionTab_m.add("Limelight", new HttpCamera("limelight", "http://10.6.10.12:5800/stream.mjpg"))
+        visionTab_m.add("Limelight", new HttpCamera("limelight", "http://10.6.10.91:5800/stream.mjpg"))
             .withWidget(BuiltInWidgets.kCameraStream)
             .withPosition(0, 0)
             .withSize(3, 3);
@@ -69,6 +66,10 @@ public class Vision extends SubsystemBase{
      */
     public void setLedMode(int ledMode){
         networkTable_m.getEntry("ledMode").setNumber(ledMode);
+    }
+
+    public void aim(double x, double y){
+        
     }
 
     public int getConePosition(){
@@ -126,13 +127,6 @@ public class Vision extends SubsystemBase{
         return calcDistance() > 0 ? calcDistance() - distanceSetPoint_m < 10 : false ;
     }
 
-    /**
-     * @return Boolean if the limelight is within the set threshold range
-     */
-    public boolean checkAim(){
-        return Math.abs(calcTx()) > 0 ? isAimed_m = Math.abs(calcTx()) < 2 && tv_m > 0 && calcDistance() - distanceSetPoint_m < 10 : false;
-    }
-
     public int getTv(){
         return tv_m;
     }
@@ -144,17 +138,15 @@ public class Vision extends SubsystemBase{
 
     }
 
+    public void setPipeline(int lineNum) {
+        networkTable_m.getEntry("pipeline").setNumber(lineNum);
+    }
+
     public void writeDashboard(){
         SmartDashboard.putNumber("calcTx", Math.round(calcTx() * 1e5) / 1e5);
         SmartDashboard.putNumber("Aimed", getTv());
         SmartDashboard.putNumber("calcTy", calcTy());
         SmartDashboard.putNumber("Distance", calcDistance());
-        SmartDashboard.putNumber("Botpose1", calcBotpose()[0]);
-        SmartDashboard.putNumber("Botpose2", calcBotpose()[1]);
-        SmartDashboard.putNumber("Botpose3", calcBotpose()[2]);
-        SmartDashboard.putNumber("Botpose4", calcBotpose()[3]);
-        SmartDashboard.putNumber("Botpose5", calcBotpose()[4]);
-        SmartDashboard.putNumber("Botpose6", calcBotpose()[5]);
     }
 
     @Override
@@ -162,5 +154,4 @@ public class Vision extends SubsystemBase{
         tv_m = (int) networkTable_m.getEntry("tv").getDouble(0.0);
         writeDashboard();
     }
-   
 }

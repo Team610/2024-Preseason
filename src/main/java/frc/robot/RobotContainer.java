@@ -1,6 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,17 +31,19 @@ public class RobotContainer {
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
     private final JoystickButton spinButton = new JoystickButton(driver, XboxController.Button.kX.value);
     private final JoystickButton travelButton = new JoystickButton(driver, XboxController.Button.kY.value);
+    private final JoystickButton visionButton = new JoystickButton(driver, XboxController.Button.kB.value);
 
     //button to end Spin or Travel command
     private final JoystickButton cancelButton = new JoystickButton(driver, XboxController.Button.kA.value);
 
 
     /* Subsystems */
-    private final Swerve s_Swerve = new Swerve();
+    private static Swerve s_Swerve;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        s_Swerve.setDefaultCommand(
+      s_Swerve =Swerve.getInstance();
+      s_Swerve.setDefaultCommand(
             new TeleopSwerve(
                 s_Swerve, 
                 () -> -driver.getRawAxis(translationAxis), 
@@ -67,6 +68,7 @@ public class RobotContainer {
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
         spinButton.onTrue(new Spin(s_Swerve, 135, () -> -driver.getRawAxis(translationAxis), ()-> -driver.getRawAxis(strafeAxis), () -> false, cancelButton));
         travelButton.onTrue(new Travel(s_Swerve, 0, 0, () -> false, cancelButton));
+        visionButton.onTrue(new T_Vision_Drive(s_Swerve, visionInst_s));
     }
 
     /**

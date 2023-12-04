@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import frc.robot.SwerveModule;
 import frc.robot.Constants;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -25,11 +24,12 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Swerve extends SubsystemBase {
+    private static Swerve swerve_s;
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
 
-    public Swerve() {
+    private Swerve() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID, "Vulture");
         gyro.configFactoryDefault();
         zeroGyro();
@@ -41,13 +41,23 @@ public class Swerve extends SubsystemBase {
             new SwerveModule(3, Constants.Swerve.Mod3.constants)
         };
 
-        /* By pausing init for a second before setting module offsets, we avoid a bug with inverting motors.
-         * See https://github.com/Team364/BaseFalconSwerve/issues/8 for more info.
-         */
         Timer.delay(1.0);
         resetModulesToAbsolute();
 
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
+    }
+
+    public static Swerve getInstance() {
+        if (swerve_s == null) {
+            swerve_s = new Swerve();
+        }
+        return swerve_s;
+    }
+
+    public void stop(){
+        for(SwerveModule mod : mSwerveMods){
+            mod.stopModule();
+        }
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
@@ -82,32 +92,32 @@ public class Swerve extends SubsystemBase {
 
     public void setModulesStraight() {
         for (SwerveModule mod : mSwerveMods) {
-          mod.setDesiredState(new SwerveModuleState(0.05, Rotation2d.fromDegrees(0)), true);
+            mod.setDesiredState(new SwerveModuleState(0.05, Rotation2d.fromDegrees(0)), true);
         }
     }
 
     public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
         return new SequentialCommandGroup(
-             new InstantCommand(() -> {
+            new InstantCommand(() -> {
                // Reset odometry for the first path you run during auto
-               if(isFirstPath){
-                   this.resetOdometry(traj.getInitialHolonomicPose());
+                if(isFirstPath){
+                    this.resetOdometry(traj.getInitialHolonomicPose());
                    //this.zeroGyro();
-               }
-             }),
-             new PPSwerveControllerCommand(
-                 traj, 
-                 this::getPose, // Pose supplier
-                 Constants.Swerve.swerveKinematics, // SwerveDriveKinematics
-                 new PIDController(6.10/2, 0.1, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
-                 new PIDController(6.10/2, 0.1, 0), // Y controller (usually the same values as X controller)
-                 new PIDController(0.3, 0.003, 0.05), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
-                 this::setModuleStates, // Module states consumer
-                  false, 
+                }
+            }),
+            new PPSwerveControllerCommand(
+                traj, 
+                this::getPose, // Pose supplier
+                Constants.Swerve.swerveKinematics, // SwerveDriveKinematics
+                new PIDController(6.10/2, 0.1, 0), // X controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+                new PIDController(6.10/2, 0.1, 0), // Y controller (usually the same values as X controller)
+                new PIDController(0.3, 0.003, 0.05), // Rotation controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
+                this::setModuleStates, // Module states consumer
+                false, 
                 this // Requires this drive subsystem
-             )
-         );
-      }
+            )
+        );
+    }
 
     public Pose2d getPose() {
         return swerveOdometry.getPoseMeters();
