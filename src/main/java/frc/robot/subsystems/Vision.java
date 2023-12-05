@@ -1,5 +1,15 @@
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.Vision.VAL_ANGLE_KD;
+import static frc.robot.Constants.Vision.VAL_ANGLE_KI;
+import static frc.robot.Constants.Vision.VAL_ANGLE_KP;
+import static frc.robot.Constants.Vision.VAL_LEFT_ANGLE_OFSET;
+import static frc.robot.Constants.Vision.VAL_RIGHT_ANGLE_OFSET;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.NetworkTable;
@@ -9,8 +19,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import static frc.robot.Constants.Vision.*;
 
 
 public class Vision extends SubsystemBase{
@@ -38,7 +46,7 @@ public class Vision extends SubsystemBase{
 
         visionTab_m = Shuffleboard.getTab("test");
 
-        visionTab_m.add("Limelight", new HttpCamera("limelight", "http://10.6.10.91:5800/stream.mjpg"))
+        visionTab_m.add("Limelight", new HttpCamera("limelight", "http://10.6.10.98:5800/stream.mjpg"))
             .withWidget(BuiltInWidgets.kCameraStream)
             .withPosition(0, 0)
             .withSize(3, 3);
@@ -125,6 +133,24 @@ public class Vision extends SubsystemBase{
 
     public boolean checkDistance(){
         return calcDistance() > 0 ? calcDistance() - distanceSetPoint_m < 10 : false ;
+    }
+
+    public boolean isReady() {
+        InetAddress limelightIP;
+        try {
+            limelightIP = InetAddress.getByName("10.6.10.98");
+            boolean reachable = limelightIP.isReachable(3000);
+            if (reachable) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        } catch (UnknownHostException e) {
+            return false;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     public int getTv(){

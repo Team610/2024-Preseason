@@ -31,7 +31,7 @@ public class RobotContainer {
     private final JoystickButton spinButton = new JoystickButton(driver, XboxController.Button.kX.value);
     private final JoystickButton travelButton = new JoystickButton(driver, XboxController.Button.kY.value);
     private final JoystickButton visionButton = new JoystickButton(driver, XboxController.Button.kB.value);
-
+    private final JoystickButton resetButton = new JoystickButton(driver, XboxController.Button.kA.value);
     //button to end Spin or Travel command
     private final JoystickButton cancelButton = new JoystickButton(driver, XboxController.Button.kA.value);
 
@@ -61,6 +61,7 @@ public class RobotContainer {
         spinButton.onTrue(new Spin(s_Swerve, 135, () -> -driver.getRawAxis(translationAxis), ()-> -driver.getRawAxis(strafeAxis), () -> false, cancelButton));
         travelButton.onTrue(new Travel(s_Swerve, 0, 0, () -> false, cancelButton));
         visionButton.onTrue(new T_Vision_Drive(s_Swerve, visionInst_s));
+        resetButton.onTrue(new T_Swerve_Reset(s_Swerve));
     }
 
     /**
