@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -28,13 +29,13 @@ public class RobotContainer {
 
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kStart.value);
-    private final JoystickButton spinButton = new JoystickButton(driver, XboxController.Button.kX.value);
+    private final JoystickButton spinButton = new JoystickButton(driver, XboxController.Button.kRightBumper.value);
     private final JoystickButton travelButton = new JoystickButton(driver, XboxController.Button.kY.value);
     private final JoystickButton visionButton = new JoystickButton(driver, XboxController.Button.kB.value);
     private final JoystickButton resetButton = new JoystickButton(driver, XboxController.Button.kA.value);
     //button to end Spin or Travel command
     private final JoystickButton cancelButton = new JoystickButton(driver, XboxController.Button.kA.value);
-
+    private final JoystickButton lightOffButton = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
     /* Subsystems */
     private static Swerve s_Swerve;
@@ -58,8 +59,10 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-        spinButton.onTrue(new Spin(s_Swerve, 135, () -> -driver.getRawAxis(translationAxis), ()-> -driver.getRawAxis(strafeAxis), () -> false, cancelButton));
+        spinButton.onTrue(new T_Vision_Light());
         travelButton.onTrue(new Travel(s_Swerve, 0, 0, () -> false, cancelButton));
+        //visionButton.onTrue(new T_Vision_Drive(s_Swerve, visionInst_s));
+        lightOffButton.onTrue(new T_Vision_LightOff());
         visionButton.onTrue(new T_Vision_Drive(s_Swerve, visionInst_s));
         resetButton.onTrue(new T_Swerve_Reset(s_Swerve));
     }

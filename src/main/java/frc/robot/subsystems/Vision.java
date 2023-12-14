@@ -12,6 +12,7 @@ import java.net.UnknownHostException;
 
 import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -31,6 +32,13 @@ public class Vision extends SubsystemBase{
     private double angleSetPoint_m;
     private int distanceSetPoint_m;
     public ShuffleboardTab visionTab_m;
+    public PIDController pidX_s = new PIDController(0.035, 0.05, 0);
+    public PIDController pidY_s = new PIDController(0.05, 0.05, 0);
+    public PIDController pidAng_s = new PIDController(0.032, 0, 0);
+    Swerve swerveInst_s = Swerve.getInstance();
+    private boolean actInPos = false;
+    int isInPosCnt = 0;
+    int counter = 0;
 
     public static Vision getInstance() {
         if (visionInst_s == null)
@@ -38,7 +46,9 @@ public class Vision extends SubsystemBase{
         return visionInst_s;
     }
 
-    public Vision() {
+    public Vision() { 
+        isInPosCnt = 0;
+        actInPos = false;
         ledMode_m = 0;
         conePosition_m = 0;
         angleSetPoint_m = 0;
@@ -56,9 +66,16 @@ public class Vision extends SubsystemBase{
         networkTable_m = NetworkTableInstance.getDefault().getTable("limelight");
 
         networkTable_m.getEntry("ledMode").setNumber(ledMode_m);
-        setCamMode(0);
+        //setCamMode(0);
         pidAngle_m = new PIDController(VAL_ANGLE_KP, VAL_ANGLE_KI, VAL_ANGLE_KD);
-        }
+        pidX_s.setSetpoint(0); //! this should be fine
+        pidAng_s.setSetpoint(0);
+        pidY_s.setSetpoint(-10); 
+        pidX_s.setTolerance(1);
+        pidY_s.setTolerance(1);
+        pidAng_s.setTolerance(3);
+        setPipeline(0);
+    }
 
     public int getLedMode() {
         return ledMode_m;
@@ -68,16 +85,18 @@ public class Vision extends SubsystemBase{
         networkTable_m.getEntry("camMode").setNumber(camMode);
     }
 
+    public void resetPID(){
+        pidAngle_m.reset();
+        pidX_s.reset();
+        pidY_s.reset();
+    }
+
     /**
      * 0 for on, 1 for off
      * @param ledMode
      */
     public void setLedMode(int ledMode){
         networkTable_m.getEntry("ledMode").setNumber(ledMode);
-    }
-
-    public void aim(double x, double y){
-        
     }
 
     public int getConePosition(){
@@ -153,8 +172,74 @@ public class Vision extends SubsystemBase{
         }
     }
 
+    public void turnOn(){
+        //setCamMode(0);
+        setLedMode(3);
+        //Timer.delay(2);
+    }
+
+    public void turnOff(){
+        //setCamMode(1);
+        setLedMode(1);
+    }
+
     public int getTv(){
         return tv_m;
+    }
+
+    public boolean isInPos(){
+        return actInPos;
+    }
+
+    public void setInPos(){
+        actInPos = false;
+        counter = 0;
+    }
+
+    public void drive(double timeStart, double currentTime){
+        //  if(isReady()) {System.out.println("just not ready?"); actInPos = true; swerveInst_s.stop();}
+
+        if (getTv() == 1) {
+            double degrees = swerveInst_s.getYaw().getDegrees()%360;
+            if(degrees>180){ degrees-=360;}
+            if(degrees < -180){ degrees+=360;}
+            double rSpeed;
+            if (Math.abs(degrees) < 3) {
+                rSpeed = 0;
+            }else{
+                //rSpeed = 0;
+                rSpeed = pidAng_s.calculate(degrees%360);
+            }
+            //double rSpeed = 0;
+            double xSpeed = pidX_s.calculate(calcTx());
+            double ySpeed = pidY_s.calculate(calcTy());
+            // double xSpeed = 0;
+            // double ySpeed = 0;
+            Translation2d translation = new Translation2d(ySpeed, xSpeed);
+            if(degrees>180){ degrees-=360;}
+            if(degrees<-180){ degrees+=360;}
+            SmartDashboard.putNumber("Degree", degrees);
+            SmartDashboard.putNumber("AngleError", pidAng_s.getPositionError());
+            SmartDashboard.putNumber("Y Error", pidY_s.getPositionError());
+            SmartDashboard.putNumber("X Error", pidX_s.getPositionError());
+            SmartDashboard.putNumber("xSpeed",xSpeed);
+            SmartDashboard.putNumber("ySpeed",ySpeed);
+            SmartDashboard.putNumber("rSpeed",rSpeed);
+            
+            swerveInst_s.drive(translation, rSpeed, true, true);
+            if (Math.abs(swerveInst_s.getYaw().getDegrees()%360) < 3 && Math.abs(calcTy() + 10) < 1) isInPosCnt++; //TODO tune???
+            else isInPosCnt = 0;
+
+            if (isInPosCnt > 20) {actInPos = true; swerveInst_s.stop();}
+        }
+        else {
+            if(currentTime - timeStart > 2){
+                actInPos = true;
+                swerveInst_s.stop();
+            }else{
+                swerveInst_s.drive(new Translation2d(0, 0), 0, true, true);
+            }
+        }
     }
 
     public double[] getAimPID(){
