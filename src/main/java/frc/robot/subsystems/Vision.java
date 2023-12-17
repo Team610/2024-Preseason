@@ -32,8 +32,8 @@ public class Vision extends SubsystemBase{
     private double angleSetPoint_m;
     private int distanceSetPoint_m;
     public ShuffleboardTab visionTab_m;
-    public PIDController pidX_s = new PIDController(0.035, 0.05, 0);
-    public PIDController pidY_s = new PIDController(0.05, 0.05, 0);
+    public PIDController pidX_s = new PIDController(0.06, 0.05, 0);
+    public PIDController pidY_s = new PIDController(0.06, 0.05, 0);
     public PIDController pidAng_s = new PIDController(0.032, 0, 0);
     Swerve swerveInst_s = Swerve.getInstance();
     private boolean actInPos = false;
@@ -197,8 +197,14 @@ public class Vision extends SubsystemBase{
     }
 
     public void drive(double timeStart, double currentTime){
-        //  if(isReady()) {System.out.println("just not ready?"); actInPos = true; swerveInst_s.stop();}
-
+        // if(isReady()) {
+        //     if(currentTime - timeStart > 2){
+        //         actInPos = true;
+        //         swerveInst_s.stop();
+        //     }else{
+        //         swerveInst_s.drive(new Translation2d(0, 0), 0, true, true);
+        //     }
+        // }
         if (getTv() == 1) {
             double degrees = swerveInst_s.getYaw().getDegrees()%360;
             if(degrees>180){ degrees-=360;}
@@ -233,7 +239,7 @@ public class Vision extends SubsystemBase{
             if (isInPosCnt > 20) {actInPos = true; swerveInst_s.stop();}
         }
         else {
-            if(currentTime - timeStart > 2){
+            if(currentTime - timeStart > 1){
                 actInPos = true;
                 swerveInst_s.stop();
             }else{
