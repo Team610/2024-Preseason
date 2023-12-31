@@ -17,6 +17,7 @@ public class T_Vision_Spin extends CommandBase {
     Vision visionInst_s;
     private boolean actInPos = false;
     int isInPosCnt = 0;
+
     public T_Vision_Spin(Swerve swerveInst_s, Vision visionInst_s) {
         this.swerveInst_s = swerveInst_s;
         this.visionInst_s = visionInst_s;
@@ -25,10 +26,10 @@ public class T_Vision_Spin extends CommandBase {
 
     @Override
     public void initialize() {
-        //! this should be fine
+        // ! this should be fine
         pidAng_s.setSetpoint(0);
         pidAng_s.setTolerance(10);
-        visionInst_s.setPipeline(0); 
+        visionInst_s.setPipeline(0);
         isInPosCnt = 0;
         actInPos = false;
     }
@@ -36,22 +37,22 @@ public class T_Vision_Spin extends CommandBase {
     @Override
     public void execute() {
         double degrees = swerveInst_s.getYaw().getDegrees() % 360;
-            double rSpeed;
-            if (Math.abs(swerveInst_s.getYaw().getDegrees()) < 10) {
-                rSpeed = 0;
-                swerveInst_s.stop();
-                actInPos = true;
-            }else{
-                rSpeed = pidAng_s.calculate(degrees);
-            }
-            //double rSpeed = 0;
-            double xSpeed = 0;
-            double ySpeed = 0;
-            Translation2d translation = new Translation2d(ySpeed, xSpeed);
-            SmartDashboard.putNumber("AngleError", pidAng_s.getPositionError());
-            SmartDashboard.putNumber("rSpeed",rSpeed);
-            SmartDashboard.putNumber("Degree", degrees);
-            swerveInst_s.drive(translation, rSpeed, true, true);
+        double rSpeed;
+        if (Math.abs(swerveInst_s.getYaw().getDegrees()) < 10) {
+            rSpeed = 0;
+            swerveInst_s.stop();
+            actInPos = true;
+        } else {
+            rSpeed = pidAng_s.calculate(degrees);
+        }
+        // double rSpeed = 0;
+        double xSpeed = 0;
+        double ySpeed = 0;
+        Translation2d translation = new Translation2d(ySpeed, xSpeed);
+        SmartDashboard.putNumber("AngleError", pidAng_s.getPositionError());
+        SmartDashboard.putNumber("rSpeed", rSpeed);
+        SmartDashboard.putNumber("Degree", degrees);
+        swerveInst_s.drive(translation, rSpeed, true, true);
     }
 
     @Override

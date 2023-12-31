@@ -10,15 +10,15 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-
-public class TeleopSwerve extends CommandBase { 
-    private Swerve s_Swerve;    
+public class TeleopSwerve extends CommandBase {
+    private Swerve s_Swerve;
     private DoubleSupplier translationSup;
     private DoubleSupplier strafeSup;
     private DoubleSupplier rotationSup;
     private boolean robotCentric;
 
-    public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup) {
+    public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup,
+            DoubleSupplier rotationSup) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
 
@@ -30,9 +30,9 @@ public class TeleopSwerve extends CommandBase {
 
     @Override
     public void execute() {
-        /* Get Values, Deadband*/
+        /* Get Values, Deadband */
 
-        if(driver.getRawButtonPressed(5)){
+        if (driver.getRawButtonPressed(5)) {
             this.robotCentric = !this.robotCentric;
         }
 
@@ -42,10 +42,9 @@ public class TeleopSwerve extends CommandBase {
 
         /* Drive */
         s_Swerve.drive(
-            new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed), 
-            rotationVal * Constants.Swerve.maxAngularVelocity, 
-            robotCentric, 
-            true
-        );
+                new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
+                rotationVal * Constants.Swerve.maxAngularVelocity,
+                robotCentric,
+                true);
     }
 }

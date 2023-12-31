@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-public class T_Vision_Light extends CommandBase{
+public class T_Vision_Light extends CommandBase {
 
     public T_Vision_Light() {
         addRequirements(RobotContainer.visionInst_s);
@@ -16,7 +16,7 @@ public class T_Vision_Light extends CommandBase{
      */
     @Override
     public void initialize() {
-        //RobotContainer.visionInst_s.setCamMode(0);
+        // RobotContainer.visionInst_s.setCamMode(0);
         RobotContainer.visionInst_s.setLedMode(3);
     }
 
@@ -32,7 +32,7 @@ public class T_Vision_Light extends CommandBase{
      */
     @Override
     public void end(boolean interrupted) {
-    }    
+    }
 
     @Override
     public boolean isFinished() {

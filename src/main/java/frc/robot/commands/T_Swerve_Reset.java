@@ -9,6 +9,7 @@ import frc.robot.subsystems.Swerve;
 public class T_Swerve_Reset extends CommandBase {
     Swerve swerveInst_s;
     boolean finished;
+
     public T_Swerve_Reset(Swerve swerveInst_s) {
         this.swerveInst_s = swerveInst_s;
         finished = false;
