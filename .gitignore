@@ -103,7 +103,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-.pathplanner/*
+.pathplanner/
 
 ### VisualStudioCode ###
 .vscode/*
