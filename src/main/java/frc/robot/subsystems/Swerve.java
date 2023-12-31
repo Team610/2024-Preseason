@@ -77,7 +77,7 @@ public class Swerve extends SubsystemBase {
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
 
         for(SwerveModule mod : mSwerveMods){
-            mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop, false);
+            mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
         }
     }    
 
@@ -86,13 +86,13 @@ public class Swerve extends SubsystemBase {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
         
         for(SwerveModule mod : mSwerveMods){
-            mod.setDesiredState(desiredStates[mod.moduleNumber], false, false);
+            mod.setDesiredState(desiredStates[mod.moduleNumber], false);
         }
     }    
 
     public void setModulesStraight() {
         for (SwerveModule mod : mSwerveMods) {
-            mod.setDesiredState(new SwerveModuleState(0.05, Rotation2d.fromDegrees(0)), true, true);
+            mod.setDesiredState(new SwerveModuleState(0.05, Rotation2d.fromDegrees(0)), true);
         }
     }
 
@@ -150,7 +150,7 @@ public class Swerve extends SubsystemBase {
     public void resetSwerveModuleAngles() {
         for (SwerveModule mod : mSwerveMods) {
             mod.resetToAbsolute();
-            mod.setDesiredState(new SwerveModuleState(0.05, Rotation2d.fromDegrees(0)), true, true);
+            mod.setDesiredState(new SwerveModuleState(0.05, Rotation2d.fromDegrees(0)), true);
         }
     }
 

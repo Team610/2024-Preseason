@@ -52,10 +52,10 @@ public class SwerveModule {
      * @param isOpenLoop
      * @param reset if the swerve is resetting to absolute
      */
-    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop, boolean reset){
+    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
         /* This is a custom optimize function, since default WPILib optimize assumes continuous controller which CTRE and Rev onboard is not */
         desiredState = CTREModuleState.optimize(desiredState, getState().angle); 
-        setAngle(desiredState, reset);
+        setAngle(desiredState);
         setSpeed(desiredState, isOpenLoop);
     }
 
@@ -75,10 +75,10 @@ public class SwerveModule {
      * @param desiredState
      * @param reset if the swerve is resetting to absolute
      */
-    private void setAngle(SwerveModuleState desiredState, boolean reset){
+    private void setAngle(SwerveModuleState desiredState){
         Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.Swerve.maxSpeed * 0.01)) ? lastAngle : desiredState.angle; //Prevent rotating module if speed is less then 1%. Prevents Jittering.
         
-        mAngleMotor.set(ControlMode.Position, Conversions.degreesToFalcon(reset ? angle.getDegrees()%360 : angle.getDegrees(), Constants.Swerve.angleGearRatio));
+        mAngleMotor.set(ControlMode.Position, Conversions.degreesToFalcon(angle.getDegrees(), Constants.Swerve.angleGearRatio));
         lastAngle = angle;
     }
 
