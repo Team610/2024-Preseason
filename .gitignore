@@ -103,8 +103,6 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-.pathplanner/
-
 ### VisualStudioCode ###
 .vscode/*
 !.vscode/settings.json
