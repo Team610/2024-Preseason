@@ -12,10 +12,11 @@ import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and button mappings) should be declared here.
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a "declarative" paradigm, very little robot logic should
+ * actually be handled in the {@link Robot} periodic methods (other than the
+ * scheduler calls). Instead, the structure of the robot (including subsystems,
+ * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
     /* Controllers */
@@ -33,24 +34,20 @@ public class RobotContainer {
     private final JoystickButton travelButton = new JoystickButton(driver, XboxController.Button.kY.value);
     private final JoystickButton visionButton = new JoystickButton(driver, XboxController.Button.kB.value);
     private final JoystickButton resetButton = new JoystickButton(driver, XboxController.Button.kA.value);
-    //button to end Spin or Travel command
+    // button to end Spin or Travel command
     private final JoystickButton cancelButton = new JoystickButton(driver, XboxController.Button.kA.value);
     private final JoystickButton lightOffButton = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
     /* Subsystems */
     private static Swerve s_Swerve;
 
-    /** The container for the robot. Contains subsystems, OI devices, and commands. */
+    /**
+     * The container for the robot. Contains subsystems, OI devices, and commands.
+     */
     public RobotContainer() {
-        s_Swerve =Swerve.getInstance();
-        s_Swerve.setDefaultCommand(
-            new TeleopSwerve(
-                s_Swerve, 
-                () -> -driver.getRawAxis(translationAxis), 
-                () -> -driver.getRawAxis(strafeAxis), 
-                () -> -driver.getRawAxis(rotationAxis)
-            )
-        );
+        s_Swerve = Swerve.getInstance();
+        s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, () -> -driver.getRawAxis(translationAxis),
+                () -> -driver.getRawAxis(strafeAxis), () -> -driver.getRawAxis(rotationAxis)));
 
         // Configure the button bindings
         configureButtonBindings();
@@ -61,7 +58,7 @@ public class RobotContainer {
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
         spinButton.onTrue(new T_Vision_Light());
         travelButton.onTrue(new Travel(s_Swerve, 0, 0, () -> false, cancelButton));
-        //visionButton.onTrue(new T_Vision_Drive(s_Swerve, visionInst_s));
+        // visionButton.onTrue(new T_Vision_Drive(s_Swerve, visionInst_s));
         lightOffButton.onTrue(new T_Vision_LightOff());
         visionButton.onTrue(new T_Vision_Drive(s_Swerve, visionInst_s));
         resetButton.onTrue(new T_Swerve_Reset(s_Swerve));

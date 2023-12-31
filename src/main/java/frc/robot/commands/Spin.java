@@ -12,7 +12,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 
-public class Spin extends CommandBase{
+public class Spin extends CommandBase {
 
     private Swerve s_Swerve;
     private double mAngle;
@@ -23,8 +23,9 @@ public class Spin extends CommandBase{
     private JoystickButton cancelButton;
 
     private PIDController pid_s;
-    
-    public Spin(Swerve s_Swerve, double angle, DoubleSupplier translationSup, DoubleSupplier strafeSup, BooleanSupplier robotCentricSup, JoystickButton cancelButton) {
+
+    public Spin(Swerve s_Swerve, double angle, DoubleSupplier translationSup, DoubleSupplier strafeSup,
+            BooleanSupplier robotCentricSup, JoystickButton cancelButton) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
 
@@ -38,6 +39,7 @@ public class Spin extends CommandBase{
         this.cancelButton = cancelButton;
 
     }
+
     @Override
     public void initialize() {
 
@@ -46,23 +48,19 @@ public class Spin extends CommandBase{
     @Override
     public void execute() {
 
-
-        double translationVal = -1* MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.stickDeadband);
-        double strafeVal = -1*MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
-        
-        
+        double translationVal = -1 * MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.stickDeadband);
+        double strafeVal = -1 * MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
 
         s_Swerve.drive(
-            new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed), 
-            -pid_s.calculate(s_Swerve.getYaw().getDegrees(), mAngle) * Constants.Swerve.maxAngularVelocity, 
-            !robotCentricSup.getAsBoolean(), 
-            true
-        );
+                new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
+                -pid_s.calculate(s_Swerve.getYaw().getDegrees(), mAngle) * Constants.Swerve.maxAngularVelocity,
+                !robotCentricSup.getAsBoolean(),
+                true);
     }
 
     @Override
     public void end(boolean interrupted) {
-        
+
     }
 
     @Override
@@ -73,7 +71,5 @@ public class Spin extends CommandBase{
             return false;
         }
     }
-
-
 
 }

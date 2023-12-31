@@ -9,13 +9,12 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Swerve;
 
-public class Move extends SequentialCommandGroup{
+public class Move extends SequentialCommandGroup {
     public Move(Swerve s_Swerve) {
         PathPlannerTrajectory move = PathPlanner.loadPath("Group", new PathConstraints(2, 2));
         addCommands(
                 new InstantCommand(() -> s_Swerve.zeroGyro()),
                 new InstantCommand(() -> s_Swerve.resetSwerveModuleAngles()),
-                new ParallelCommandGroup(s_Swerve.followTrajectoryCommand(move, true))
-        );
+                new ParallelCommandGroup(s_Swerve.followTrajectoryCommand(move, true)));
     }
 }
