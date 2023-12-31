@@ -29,10 +29,8 @@
   "files.associations": {
     "iomanip": "cpp"
   },
-  "java.format.settings.url": ".vscode/java-formatter.xml",
+  "java.format.settings.url": "https://github.com/google/styleguide/blob/gh-pages/eclipse-java-google-style.xml",
   "[java]": {
     "editor.insertSpaces": true
   },
-  "java.checkstyle.configuration": "https://github.com/google/styleguide/blob/gh-pages/eclipse-java-google-style.xml",
-  "java.checkstyle.version": "10.12.7"
 }
